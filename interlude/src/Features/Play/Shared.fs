@@ -119,7 +119,7 @@ type IPlayScreen(info: LoadedChartInfo, pacemaker_info: PacemakerState, scoring:
     let noteskin_config = Content.NoteskinConfig
 
     let playfield =
-        Playfield(info.WithColors, state, noteskin_config, options.VanishingNotes.Value)
+        Playfield(info.WithColors, state, noteskin_config, options.VanishingNotes.Value, info.WithMods.ModsSelected)
 
     let hud_ctx : HudContext = { Screen = this; Playfield = playfield; State = state; Config = Content.HUD; Inner = hud_ctx_inner }
 

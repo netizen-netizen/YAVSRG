@@ -7,6 +7,7 @@ open Percyqaz.Flux.UI
 open Prelude
 open Prelude.Gameplay.Scoring
 open Prelude.Charts
+open Prelude.Mods
 open Prelude.Skins.Noteskins
 open Interlude.Content
 open Interlude.Options
@@ -36,7 +37,7 @@ type private HoldRenderState =
     | HeadOnscreen of pos: float32 * index: int
     | NoHold
 
-type Playfield(chart: ColoredChart, state: PlayState, noteskin_config: NoteskinConfig, vanishing_notes: bool) as this =
+type Playfield(chart: ColoredChart, state: PlayState, noteskin_config: NoteskinConfig, vanishing_notes: bool, mods: ModState) as this =
     inherit Container(NodeType.None)
 
     let NEGATIVE_SV_ROW_COUNT = 150
@@ -113,6 +114,28 @@ type Playfield(chart: ColoredChart, state: PlayState, noteskin_config: NoteskinC
                     Right = r.Right
                     Bottom = bottom - r.Top
                 }
+
+    /// Applies scroll direction transform, with lane-split support
+    /// For lane-split mod, left half uses upscroll and right half uses downscroll
+    let scroll_direction_transform_with_lane_split (bottom: float32) (lane: int) : Rect -> Rect =
+        let is_lane_split_active = ModRenderingHelpers.is_lane_split_horizontal mods
+        let is_right_half = lane >= keys / 2
+
+        if is_lane_split_active && is_right_half then
+            // Right half always uses downscroll for lane split
+            fun (r: Rect) ->
+                {
+                    Left = r.Left
+                    Top = bottom - r.Bottom
+                    Right = r.Right
+                    Bottom = bottom - r.Top
+                }
+        else if is_lane_split_active then
+            // Left half always uses upscroll
+            id
+        else
+            // Normal mode: respects user's upscroll/downscroll preference
+            scroll_direction_transform bottom
 
     let hold_tail_transform (k: int) : Quad -> Quad =
         if not noteskin_config.UseHoldTailTexture then rotation k
@@ -232,7 +255,7 @@ type Playfield(chart: ColoredChart, state: PlayState, noteskin_config: NoteskinC
         let inline draw_note (k: int, pos: float32, color: int) : unit =
             Render.tex_quad
                 ((Rect.FromSize(left + column_positions.[k], pos, column_width, note_height)
-                  |> scroll_direction_transform bottom)
+                  |> scroll_direction_transform_with_lane_split bottom k)
                     .AsQuad
                  |> rotation k)
                 Color.White.AsQuad
@@ -241,7 +264,7 @@ type Playfield(chart: ColoredChart, state: PlayState, noteskin_config: NoteskinC
         let inline draw_head (k: int, pos: float32, color: int, tint: Color) : unit =
             Render.tex_quad
                 ((Rect.FromSize(left + column_positions.[k], pos, column_width, note_height)
-                  |> scroll_direction_transform bottom)
+                  |> scroll_direction_transform_with_lane_split bottom k)
                     .AsQuad
                  |> rotation k)
                 tint.AsQuad
@@ -255,7 +278,7 @@ type Playfield(chart: ColoredChart, state: PlayState, noteskin_config: NoteskinC
                     left + column_positions.[k] + column_width,
                     pos_b + note_height * 0.5f + 1f |> min playfield_height
                   )
-                  |> scroll_direction_transform bottom)
+                  |> scroll_direction_transform_with_lane_split bottom k)
                     .AsQuad
                 tint.AsQuad
                 (Sprite.pick_texture (animation.Loops, color) holdbody)
@@ -279,7 +302,7 @@ type Playfield(chart: ColoredChart, state: PlayState, noteskin_config: NoteskinC
                             left + column_positions.[k] + note_height,
                             pos + note_height
                         )
-                        |> scroll_direction_transform bottom
+                        |> scroll_direction_transform_with_lane_split bottom k
                     ).AsQuad
                     |> hold_tail_transform k
                 )
@@ -303,7 +326,7 @@ type Playfield(chart: ColoredChart, state: PlayState, noteskin_config: NoteskinC
                             left + column_positions.[k] + note_height,
                             pos + note_height
                         )
-                        |> scroll_direction_transform bottom
+                        |> scroll_direction_transform_with_lane_split bottom k
                     ).AsQuad
                     |> hold_tail_transform k
                 )

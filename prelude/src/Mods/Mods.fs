@@ -88,6 +88,56 @@ module Mods =
                 Apply = fun s -> ColumnSwap.apply (ColumnSwap.unpack s)
                 Shorthand = fun state -> sprintf "[%s]" (ColumnSwap.format (ColumnSwap.unpack state))
             }
+
+            "lane_split",
+            { Mod.Default with
+                Status = ModStatus.Offline
+                Type = MultipleModes 2L
+                Exclusions = [ "mirror"; "shuffle"; "random" ]
+                Apply = fun _ mc -> LaneSplit.apply mc
+                Shorthand = function 1L -> "LS-V" | _ -> "LS-H"
+            }
+
+            "hidden",
+            { Mod.Default with
+                Status = ModStatus.Offline
+                Type = MultipleModes 2L
+                Apply = fun _ mc -> Hidden.apply mc
+                Shorthand = function 1L -> "HID-L" | _ -> "HID"
+            }
+
+            "sudden",
+            { Mod.Default with
+                Status = ModStatus.Offline
+                Type = MultipleModes 2L
+                Apply = fun _ mc -> Sudden.apply mc
+                Shorthand = function 1L -> "SUD-L" | _ -> "SUD"
+            }
+
+            "time_warp",
+            { Mod.Default with
+                Status = ModStatus.Offline
+                Type = Stateless
+                Apply = fun _ -> TimeWarp.apply
+                Shorthand = fun _ -> "TW"
+            }
+
+            "reverse_scroll",
+            { Mod.Default with
+                Status = ModStatus.Offline
+                Type = Stateless
+                Exclusions = []
+                Apply = fun _ -> ReverseScroll.apply
+                Shorthand = fun _ -> "REV"
+            }
+
+            "chaos",
+            { Mod.Default with
+                Status = ModStatus.Offline
+                Type = Stateless
+                Apply = fun _ -> Chaos.apply
+                Shorthand = fun _ -> "CHS"
+            }
         ]
 
     let APPLICATION_PRIORITY_ORDER =
@@ -100,6 +150,12 @@ module Mods =
             "random"
             "inverse"
             "nosv"
+            "lane_split"
+            "hidden"
+            "sudden"
+            "time_warp"
+            "reverse_scroll"
+            "chaos"
         ]
 
     let MENU_DISPLAY_ORDER =
@@ -112,6 +168,12 @@ module Mods =
             "more_notes"
             "noln"
             "nosv"
+            "lane_split"
+            "hidden"
+            "sudden"
+            "time_warp"
+            "reverse_scroll"
+            "chaos"
         ]
 
     do
