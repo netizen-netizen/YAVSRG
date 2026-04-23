@@ -22,7 +22,7 @@ type SkinPreview(position: Position) as this =
         let state, recreate_scoring = PlayState.Dummy info
         let noteskin_config = Content.NoteskinConfig
         let playfield =
-            Playfield(info.WithColors, state, noteskin_config, false)
+            Playfield(info.WithColors, state, noteskin_config, false, info.WithMods.ModsSelected)
 
         playfield.Add(LanecoverOverReceptors())
         let overlay_items = Container(NodeType.None)

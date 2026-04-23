@@ -89,6 +89,6 @@ module ModRenderingHelpers =
             // Add slight random tint variation
             let rand = System.Random(int32 (System.DateTime.Now.Ticks % 100L))
             let hue_shift = (rand.NextSingle() - 0.5f) * 0.1f
-            Color.FromHSV(hue_shift, 0.9f, 1.0f)
+            Color.FromHsv(hue_shift, 0.9f, 1.0f)
         else
             Color.White

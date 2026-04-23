@@ -46,6 +46,12 @@
     <Compile Include="Mods\Inverse.fs" />
     <Compile Include="Mods\MoreNotes.fs" />
     <Compile Include="Mods\Randomise.fs" />
+    <Compile Include="Mods\LaneSplit.fs" />
+    <Compile Include="Mods\Hidden.fs" />
+    <Compile Include="Mods\Sudden.fs" />
+    <Compile Include="Mods\TimeWarp.fs" />
+    <Compile Include="Mods\ReverseScroll.fs" />
+    <Compile Include="Mods\Chaos.fs" />
     <Compile Include="Mods\Mods.fs" />
     <Compile Include="Mods\ModState.fs" />
     <Compile Include="Gameplay\Replays\ReplayFormat.fs" />
